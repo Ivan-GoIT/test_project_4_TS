@@ -11,22 +11,21 @@ class Key {
 class Person {
   public name: string = 'user';
   constructor(private key: Key) {}
-  getKey() {
+  getKey(): Key {
     return this.key;
   }
 }
 
 abstract class House {
   protected door: 'open' | 'close' = 'close';
-  protected key;
   protected tenants: Person[] = [];
 
-  constructor(key: Key) {
-    this.key = key.getSignature();
-  }
+  constructor(protected key: Key) { }
+  
   comeIn(tenant: Person): void {
-    if (this.door === 'open') this.tenants.push(tenant);
-    else throw new Error('Door is close');
+    if (this.door !== 'open') throw new Error('Door is close')
+    this.tenants.push(tenant);
+    console.log('Person inside');
   }
 
   showTenants() {
@@ -37,8 +36,8 @@ abstract class House {
 }
 
 class MyHouse extends House {
-  openDoor(key: Key): void {
-    this.door = key.getSignature() === this.key ? 'open' : 'close';
+  openDoor(key: Key) {
+    this.door = key.getSignature() === this.key.getSignature() ? 'open' : 'close';
   }
 }
 
